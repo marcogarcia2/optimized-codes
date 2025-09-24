@@ -4,6 +4,7 @@
 #define N 512
 #define TILE N/16
 
+// Usado somente para debug
 void checksum(int **C){
     long long sum = 0;
     for (int i = 0; i < N; i++)
