@@ -18,7 +18,7 @@ Execute o binário com:
 ```shell
 sudo perf stat -r 10 -e L1-dcache-loads,L1-dcache-load-misses,branch-instructions,branch-misses ./matmul X Y
 ```
-Neste comando, deve-se passar os argumentos X e Y que dizem respeito ao tipo de alocação de memória e ao algoritmo de multiplicação de matrizes, respectivamente.
+Neste comando, deve-se passar os argumentos X e Y referentes ao tipo de alocação de memória e ao algoritmo de multiplicação de matrizes, respectivamente.
 
 --- 
 - **0 Y:** Alocação de Memória Estática
@@ -30,7 +30,7 @@ Neste comando, deve-se passar os argumentos X e Y que dizem respeito ao tipo de 
 - **X 3:** Loop Tiling
 --- 
 
-Exemplo: Loop Unrolling com Memória Dinâmica 
+**Exemplo:** Loop Unrolling com Alocação Dinâmica 
 ```shell
 sudo perf stat -r 10 -e ... ./matmul 1 2
 ```
