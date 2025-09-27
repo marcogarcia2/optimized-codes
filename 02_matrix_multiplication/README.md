@@ -1,6 +1,6 @@
-# Perf 
+# Profiling de Algoritmos - Parte 1
 
-Esta prática consiste em utilizar a ferramenta **perf** para coletar diferentes métricas de um programa. Instale o com:
+Esta prática consiste em utilizar a ferramenta **perf**, um perfilador por amostragem, para coletar diferentes métricas de um programa que implementa diferentes algoritmos de **multiplicação de matrizes**. Instale o perfilador com:
 
 ```shell
 sudo apt install linux-tools-common
@@ -13,7 +13,7 @@ Compile o código com:
 ```shell
 gcc matmul.c -o matmul
 ```
-Execute o binário com:
+Para adquirir as métricas desejadas, consulte este [link](https://www.brendangregg.com/perf.html). Para esta atividade, algumas métricas de cache e de branch foram escolhidas. Execute o binário com:
 
 ```shell
 sudo perf stat -r 10 -e L1-dcache-loads,L1-dcache-load-misses,branch-instructions,branch-misses ./matmul X Y
