@@ -24,17 +24,21 @@ void clean_cache(void){
 
 
 // -------------- MACROS e Funções de ARRAY -------------- //
-#define ARRAY_SZ (4096*512) 
+#define ARRAY_SZ (4096*1024*2) 
 #define ARRAY_MAX_ELEMENT_VAL (4096*8)
 #define MAX_REPS 10
 
-// Função que aloca memória e cria sempre o mesmo array
+// Função que aloca memória para o array
 int *create_array(void){    
-    srand(42); // Garante que o mesmo array seja alocado sempre
     int *array = (int*)malloc(sizeof(int) * ARRAY_SZ);
+    return array;
+}
+
+// Função que reseta o array sempre com os mesmos valores aleatórios
+void reset_array(int *array){
+    srand(42); // Garante que o mesmo array seja alocado sempre
     for (int i = 0; i < ARRAY_SZ; i++)
         array[i] = rand() % ARRAY_MAX_ELEMENT_VAL;    
-    return array;
 }
 
 // Função que libera a memória do array
@@ -141,8 +145,8 @@ void merge(int *array, int left, int mid, int right){
     while (i < left_size) array[k++] = L[i++];
     while (j < right_size) array[k++] = R[j++];
 
-    free(L);
-    free(R);
+    destroy_array(&L);
+    destroy_array(&R);
 }
 
 // Merge Sort
@@ -200,44 +204,61 @@ void heap_sort(int *array, int size) {
 
 // ------------------------ MAIN ------------------------- //
 int main(int argc, char *argv[]){
+
+    double times[3];
+    clock_t start, end;
+
+    int *array = create_array();
     
     // Loop sobre os algoritmos de ordenação implementados
     for (int alg = 0; alg < 3; alg++){
         
-        // Executar 10 vezes cada algoritmo de ordenação
-        for(int n_rep = 0; n_rep < MAX_REPS; n_rep++){
+        // Resetando os valores originais e limpando a cache do processador
+        reset_array(array);
+        clean_cache();
+        
+        /*
+        Para um array tão grande quanto ARRAY_SZ, o tempo gasto na instrução 
+        de salto com switch é irrelevante frente ao tempo total de execução. 
+        Para o código ficar mais intuitivo, achei melhor colocar o start antes 
+        do switch e o end logo após.
+        */
+       
+       // Iniciando a contagem do tempo 
+       start = clock();
 
-            int *array = create_array();
-            clean_cache();
-
-            switch(alg){
-                case 0:
-                    if (n_rep == 0) printf("QUICK SORT\n");
-                    quick_sort(array, 0, ARRAY_SZ-1);
-                    break;
-                    
-                case 1:
-                    if (n_rep == 0) printf("MERGE SORT\n");
-                    merge_sort(array, 0, ARRAY_SZ-1);
-                    break;
-                    
-                case 2:
-                    if (n_rep == 0) printf("HEAP SORT\n");
-                    heap_sort(array, ARRAY_SZ);
-                    break;
-                    
-                default:
-                    break;
-            }
-
-            printf("%d, ", n_rep+1);
-            fflush(stdin);
-            check_sorting(array);
-            destroy_array(&array);
+        switch(alg){
+            case 0:
+                quick_sort(array, 0, ARRAY_SZ-1);
+                break;
+                
+            case 1:
+                merge_sort(array, 0, ARRAY_SZ-1);
+                break;
+                
+            case 2:
+                heap_sort(array, ARRAY_SZ);
+                break;
+                
+            default:
+                break;
         }
-        printf("\n");
+
+        // Fim do tempo
+        end = clock();
+        
+        // Calculando o tempo gasto em segundos
+        times[alg] = (double)(end-start)/CLOCKS_PER_SEC;
     }
 
+    // Desalocando a memória do array
+    destroy_array(&array);
+
+    printf("------------- Results -------------\n");
+    printf("Random array with %d elements:\n", ARRAY_SZ);
+    printf("Quick Sort\t %lf s\n", times[0]);
+    printf("Merge Sort\t %lf s\n", times[1]);
+    printf("Heap Sort\t %lf s\n", times[2]);
 
     return 0;
 }
