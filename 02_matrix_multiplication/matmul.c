@@ -10,7 +10,7 @@ void checksum(int **C){
     for (int i = 0; i < N; i++)
         sum += C[i][i];
     
-    printf("CHECKSUM: %d\n", sum);
+    printf("CHECKSUM: %lld\n", sum);
 }
 
 void static_naive(int A[N][N], int B[N][N], int C[N][N]){
