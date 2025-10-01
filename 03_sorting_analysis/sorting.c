@@ -24,7 +24,7 @@ void clean_cache(void){
 
 
 // -------------- MACROS e Funções de ARRAY -------------- //
-#define ARRAY_SZ (4096*1024*2) 
+#define ARRAY_SZ (4096*1024) 
 #define ARRAY_MAX_ELEMENT_VAL (4096*8)
 #define MAX_REPS 10
 
@@ -205,50 +205,67 @@ void heap_sort(int *array, int size) {
 // ------------------------ MAIN ------------------------- //
 int main(int argc, char *argv[]){
 
+    if (argc > 2){
+        printf("Wrong arguments. Use: ./sorting <num_runs>");
+    }
+
     double times[3];
+
     clock_t start, end;
 
     int *array = create_array();
-    
-    // Loop sobre os algoritmos de ordenação implementados
-    for (int alg = 0; alg < 3; alg++){
-        
-        // Resetando os valores originais e limpando a cache do processador
-        reset_array(array);
-        clean_cache();
-        
-        /*
-        Para um array tão grande quanto ARRAY_SZ, o tempo gasto na instrução 
-        de salto com switch é irrelevante frente ao tempo total de execução. 
-        Para o código ficar mais intuitivo, achei melhor colocar o start antes 
-        do switch e o end logo após.
-        */
-       
-       // Iniciando a contagem do tempo 
-       start = clock();
 
-        switch(alg){
-            case 0:
-                quick_sort(array, 0, ARRAY_SZ-1);
-                break;
-                
-            case 1:
-                merge_sort(array, 0, ARRAY_SZ-1);
-                break;
-                
-            case 2:
-                heap_sort(array, ARRAY_SZ);
-                break;
-                
-            default:
-                break;
+    int num_runs;
+    if (argc == 1) num_runs = 1;
+    else num_runs = atoi(argv[1]);
+    if (num_runs <= 0){
+        puts("ERROR! Enter a valid number of runs.");
+        exit(0);
+    }
+    
+    for (int rep = 1; rep <= num_runs; rep++){
+    
+        // Loop sobre os algoritmos de ordenação implementados
+        for (int alg = 0; alg < 3; alg++){
+            
+            // Resetando os valores originais e limpando a cache do processador
+            reset_array(array);
+            clean_cache();
+            
+            /*
+            Para um array tão grande quanto ARRAY_SZ, o tempo gasto na instrução 
+            de salto com switch é irrelevante frente ao tempo total de execução. 
+            Para o código ficar mais intuitivo, achei melhor colocar o start antes 
+            do switch e o end logo após.
+            */
+        
+        // Iniciando a contagem do tempo 
+        start = clock();
+
+            switch(alg){
+                case 0:
+                    quick_sort(array, 0, ARRAY_SZ-1);
+                    break;
+                    
+                case 1:
+                    merge_sort(array, 0, ARRAY_SZ-1);
+                    break;
+                    
+                case 2:
+                    heap_sort(array, ARRAY_SZ);
+                    break;
+                    
+                default:
+                    break;
+            }
+
+            // Fim do tempo
+            end = clock();
+            
+            // Calculando o tempo gasto em segundos
+            times[alg] += (double)(end-start)/CLOCKS_PER_SEC;
         }
 
-        // Fim do tempo
-        end = clock();
-        
-        // Calculando o tempo gasto em segundos
-        times[alg] = (double)(end-start)/CLOCKS_PER_SEC;
     }
 
     // Desalocando a memória do array
@@ -256,9 +273,11 @@ int main(int argc, char *argv[]){
 
     printf("------------- Results -------------\n");
     printf("Random array with %d elements:\n", ARRAY_SZ);
-    printf("Quick Sort\t %lf s\n", times[0]);
-    printf("Merge Sort\t %lf s\n", times[1]);
-    printf("Heap Sort\t %lf s\n", times[2]);
+    printf("Quick Sort\t %lf s\n", times[0]/num_runs);
+    printf("Merge Sort\t %lf s\n", times[1]/num_runs);
+    printf("Heap Sort\t %lf s\n", times[2]/num_runs);
+    if (num_runs > 1) printf("Runs:\t\t %d\n", num_runs);
+
 
     return 0;
 }
