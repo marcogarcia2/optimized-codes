@@ -11,4 +11,5 @@ for X in 0 1; do
     done
 done
 
+rm matmul
 

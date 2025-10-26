@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <math.h>
 
 // -------------- MACROS e Funções de CACHE -------------- //
 #define KB (1024)
@@ -209,12 +210,11 @@ int main(int argc, char *argv[]){
         printf("Wrong arguments. Use: ./sorting <num_runs>");
     }
 
-    double times[3];
-
+    
     clock_t start, end;
-
+    
     int *array = create_array();
-
+    
     int num_runs;
     if (argc == 1) num_runs = 1;
     else num_runs = atoi(argv[1]);
@@ -223,7 +223,10 @@ int main(int argc, char *argv[]){
         exit(0);
     }
     
-    for (int rep = 1; rep <= num_runs; rep++){
+    // Vetor que irá guardar os tempos de execução
+    double times[3];
+    
+    for (int rep = 0; rep < num_runs; rep++){
     
         // Loop sobre os algoritmos de ordenação implementados
         for (int alg = 0; alg < 3; alg++){
@@ -268,16 +271,15 @@ int main(int argc, char *argv[]){
 
     }
 
-    // Desalocando a memória do array
-    destroy_array(&array);
-
     printf("------------- Results -------------\n");
     printf("Random array with %d elements:\n", ARRAY_SZ);
-    printf("Quick Sort\t %lf s\n", times[0]/num_runs);
-    printf("Merge Sort\t %lf s\n", times[1]/num_runs);
-    printf("Heap Sort\t %lf s\n", times[2]/num_runs);
+    printf("Quick Sort\t %lf s\n", (double)times[0]/num_runs);
+    printf("Merge Sort\t %lf s\n", (double)times[1]/num_runs);
+    printf("Heap Sort\t %lf s\n", (double)times[2]/num_runs);
     if (num_runs > 1) printf("Runs:\t\t %d\n", num_runs);
 
+    // Desalocando a memória do array
+    destroy_array(&array);
 
     return 0;
 }
